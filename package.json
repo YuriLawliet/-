@@ -1,0 +1,19 @@
+{
+  "name": "timer-tracker",
+  "version": "1.0.0",
+  "main": "App.js",
+  "scripts": {
+    "start": "expo start",
+    "start-server": "node server.js"
+  },
+  "dependencies": {
+    "apple-signin-auth": "^2.0.0",
+    "express": "^4.19.2",
+    "jsonwebtoken": "^9.0.2",
+    "expo": "^49.0.0",
+    "expo-apple-authentication": "^5.0.0",
+    "react": "^18.2.0",
+    "react-native": "^0.72.0",
+    "@react-native-async-storage/async-storage": "^1.23.0"
+  }
+}
