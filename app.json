@@ -1,0 +1,11 @@
+{
+  "expo": {
+    "name": "TimerTracker",
+    "slug": "timer-tracker",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "platforms": ["ios", "android"],
+    "jsEngine": "hermes",
+    "entryPoint": "./App.js"
+  }
+}
