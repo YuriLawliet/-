@@ -16,7 +16,7 @@ It has been upgraded to **Expo SDK 53**.
    If you see a compatibility error in Expo Go, install the latest version from the app store or create a development build.
    You can verify your setup with:
    ```bash
-   npx expo-doctor --fix-dependencies
+   npx expo-doctor
    ```
 3. To run the backend server for data storage:
    ```bash
