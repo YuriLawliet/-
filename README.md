@@ -11,9 +11,13 @@ It has been upgraded to **Expo SDK 53**.
    ```
 2. Start the mobile app with Expo:
    ```bash
-   npm start
-   ```
+  npm start
+  ```
    If you see a compatibility error in Expo Go, install the latest version from the app store or create a development build.
+   If Metro reports missing helpers from `@babel/runtime`, install them with:
+   ```bash
+   npx expo install @babel/runtime
+   ```
    You can verify your setup with:
    ```bash
    npx expo-doctor
