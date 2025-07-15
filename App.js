@@ -1,11 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, TextInput, Button, ScrollView, Alert, Modal, Pressable, StyleSheet } from 'react-native';
+import { View, Text, TextInput, Button, ScrollView, Alert, Modal, StyleSheet } from 'react-native';
 import * as AppleAuthentication from 'expo-apple-authentication';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function App() {
   const [userId, setUserId] = useState(null);
+  const [idToken, setIdToken] = useState(null);
   const [hourlyRate, setHourlyRate] = useState('1200');
+
+  const API_URL = 'http://localhost:3000';
   const [startTime, setStartTime] = useState(null);
   const [timerSec, setTimerSec] = useState(0);
   const [records, setRecords] = useState([]);
@@ -17,14 +20,17 @@ export default function App() {
 const timer = useRef(null);
 
   useEffect(() => {
-    AsyncStorage.getItem('userId').then(id => {
+    (async () => {
+      const id = await AsyncStorage.getItem('userId');
+      const token = await AsyncStorage.getItem('idToken');
       if (id) setUserId(id);
-    });
+      if (token) setIdToken(token);
+    })();
   }, []);
 
   useEffect(() => {
     if (userId) loadData(userId);
-  }, [userId]);
+  }, [userId, idToken]);
 
   useEffect(() => {
     if (startTime) {
@@ -43,6 +49,17 @@ const timer = useRef(null);
 
   async function loadData(id) {
     try {
+      if (idToken) {
+        const res = await fetch(`${API_URL}/data/${encodeURIComponent(id)}`, {
+          headers: { Authorization: `Bearer ${idToken}` }
+        });
+        if (res.ok) {
+          const obj = await res.json();
+          setRecords(obj.records || []);
+          await AsyncStorage.setItem(storageKey(id), JSON.stringify({ records: obj.records || [] }));
+          return;
+        }
+      }
       const json = await AsyncStorage.getItem(storageKey(id));
       if (json) {
         const obj = JSON.parse(json);
@@ -54,6 +71,16 @@ const timer = useRef(null);
   async function saveData(list) {
     try {
       await AsyncStorage.setItem(storageKey(userId), JSON.stringify({ records: list }));
+      if (idToken) {
+        await fetch(`${API_URL}/data/${encodeURIComponent(userId)}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${idToken}`
+          },
+          body: JSON.stringify({ records: list })
+        });
+      }
     } catch (e) {}
   }
 
@@ -154,6 +181,7 @@ const timer = useRef(null);
   }
 
   const { yearSec, monthSec, weekSec } = totalsNow(startTime ? timerSec : 0);
+  const allSec = records.reduce((sum, r) => sum + r.seconds, 0) + (startTime ? timerSec : 0);
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={{padding:20}}>
@@ -165,9 +193,18 @@ const timer = useRef(null);
           style={{width:'100%', height:44}}
           onPress={async () => {
             try {
-              const credential = await AppleAuthentication.signInAsync({ requestedScopes: [AppleAuthentication.AppleAuthenticationScope.FULL_NAME, AppleAuthentication.AppleAuthenticationScope.EMAIL] });
+              const credential = await AppleAuthentication.signInAsync({
+                requestedScopes: [
+                  AppleAuthentication.AppleAuthenticationScope.FULL_NAME,
+                  AppleAuthentication.AppleAuthenticationScope.EMAIL
+                ]
+              });
               setUserId(credential.user);
+              setIdToken(credential.identityToken || null);
               await AsyncStorage.setItem('userId', credential.user);
+              if (credential.identityToken) {
+                await AsyncStorage.setItem('idToken', credential.identityToken);
+              }
             } catch (e) {}
           }}
         />
@@ -187,6 +224,7 @@ const timer = useRef(null);
           <Text>週間合計: {earnedFromSeconds(weekSec).toFixed(2)}円</Text>
           <Text>月間合計: {earnedFromSeconds(monthSec).toFixed(2)}円</Text>
           <Text>年間合計: {earnedFromSeconds(yearSec).toFixed(2)}円</Text>
+          <Text>累計合計: {earnedFromSeconds(allSec).toFixed(2)}円</Text>
           <View style={{marginTop:20}}>
             <Text>履歴</Text>
             {records.map((r, idx) => (

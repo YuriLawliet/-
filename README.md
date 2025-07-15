@@ -22,10 +22,12 @@ It has been upgraded to **Expo SDK 53**.
    ```bash
    npx expo-doctor
    ```
-3. To run the backend server for data storage:
+3. To run the backend server for data storage (the mobile app syncs records using your Apple ID token):
    ```bash
    npm run start-server
    ```
+   If the server is not running on `localhost:3000`, edit the `API_URL` constant
+   near the top of `App.js` to match its address.
 
 The app requires an Apple ID for authentication. After signing in you can start
 and stop the timer, view your history, and edit or delete entries. Earnings are
