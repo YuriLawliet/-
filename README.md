@@ -7,8 +7,11 @@ It has been upgraded to **Expo SDK 53**.
 
 1. Install dependencies (requires npm 9+):
    ```bash
-   npm install
-   ```
+  npm install
+  ```
+   If `npx expo start` fails with "Cannot find module 'debug'", it usually means
+   the dependencies were not installed correctly. Run `npm install` again to
+   ensure `node_modules` is populated.
 2. Start the mobile app with Expo:
    ```bash
   npm start
