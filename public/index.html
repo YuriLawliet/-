@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>タイマートラッカー</title>
+</head>
+<body>
+  <h1>タイマートラッカー</h1>
+
+  <div id="loginSection" style="display:none;">
+    <p>Apple IDでサインインしてください</p>
+    <div id="appleid-signin" data-color="black" data-border="true" data-type="sign in"></div>
+  </div>
+
+  <div id="mainSection" style="display:none;">
+    <div id="userInfo"></div>
+    <label>時給: <input type="number" id="hourlyRate" value="1200"></label>
+    <button id="startBtn">開始</button>
+    <button id="stopBtn">停止</button>
+    <button id="undoBtn">取り消す</button>
+    <button id="historyBtn">履歴を見る</button>
+    <div>現在のセッション収益: <span id="current">0円</span></div>
+    <div>今週の累計: <span id="weekTotal">0円</span></div>
+    <div>今月の累計: <span id="monthTotal">0円</span></div>
+    <div>今年の累計: <span id="yearTotal">0円</span></div>
+  </div>
+
+  <div id="historySection" style="display:none;">
+    <table border="1">
+      <thead>
+        <tr><th>開始</th><th>終了</th><th>時給</th><th>秒数</th><th>操作</th></tr>
+      </thead>
+      <tbody id="historyBody"></tbody>
+    </table>
+    <button id="exportCsv">CSVでエクスポート</button>
+    <button id="exportJson">JSONでエクスポート</button>
+  </div>
+  <script src="https://appleid.cdn-apple.com/appleauth/static/jsapi/appleid/1/en_US/appleid.auth.js" defer></script>
+  <script src="script.js"></script>
+</body>
+</html>
